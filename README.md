@@ -9,7 +9,7 @@
 
 
 
-# 🌌 Okay, Seriously though;
+# Okay, Seriously though;
 ----
 
 ## This is an AI-assisted implementation of a discord wrapper using the HolyC Library from Terry A. Davis and the HolyC Compiler Library from James Barford. 
@@ -24,21 +24,36 @@ I'm still in the process of applying Discord's Protocol over the TLS/Websocket m
 
 ## Roadmap
 ----
-|Progress|Name of Part|
+|Progress|Base Part|
 | ---- | ---- |
-|✔| TLS|
-|✔| WebSocket handshake |
+|✔|TLS|
+|✔|WebSocket handshake |
 |✔ |WebSocket frames |
+
+|Progress|KSON Part|
+| ---- | ---- |
 |✔ |ParseNumber |
 |✔ |ParseString |
-|⬜| ParseObject |
-|⬜| ParseNull |
-|⬜| ParseBoolean |
-|⬜| ParseArray |
-|⬜| KSONStringify |
-|⬜| Gateway Hello |
-|⬜| Heartbeat |
-|⬜| Identify |
-|⬜| READY event |
-|⬜| Event dispatcher |
-|⬜| Bot API |
+|⬜|ParseObject |
+|⬜|ParseNull |
+|⬜|ParseBoolean |
+|⬜|ParseArray |
+|⬜|KSONStringify |
+
+|Progress|Gateway|
+| ---- | ---- |
+|⬜|Gateway Hello |
+|⬜|Heartbeat |
+|⬜|Identify |
+
+|Progress|API|
+| ---- | ---- |
+|⬜|READY event |
+|⬜|Event dispatcher |
+|⬜|Bot API |
+
+# So what the fuck is KSON?
+----
+## KSON (Katsuragi Script Object Notation) is just a custom JSON Processor and Parser built with HolyC and for this repository specifically.
+
+It's just JSON with microtransaction clothes.
