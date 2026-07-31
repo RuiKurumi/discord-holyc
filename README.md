@@ -20,3 +20,25 @@
 -----
 
 I'm still in the process of applying Discord's Protocol over the TLS/Websocket methods, so it will likely be still a long time before I can use it for actual applications.
+
+
+## Roadmap
+----
+|Progress|Name of Part|
+| ---- | ---- |
+|✔| TLS|
+|✔| WebSocket handshake |
+|✔ |WebSocket frames |
+|✔ |ParseNumber |
+|✔ |ParseString |
+|⬜| ParseObject |
+|⬜| ParseNull |
+|⬜| ParseBoolean |
+|⬜| ParseArray |
+|⬜| KSONStringify |
+|⬜| Gateway Hello |
+|⬜| Heartbeat |
+|⬜| Identify |
+|⬜| READY event |
+|⬜| Event dispatcher |
+|⬜| Bot API |
