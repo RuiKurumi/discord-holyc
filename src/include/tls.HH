@@ -10,6 +10,8 @@ class TLSContext
     U0 *ssl_ctx;
     U0 *ssl;
 
+    U8 *hostname;
+    
     Bool established;
 };
 
