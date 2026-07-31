@@ -45,3 +45,37 @@ I32 StrCompare(
 
     return *a - *b;
 }
+U8 *StrCopy(
+    U8 *source
+)
+{
+    I64 length;
+    I64 i;
+    U8 *dest;
+
+
+    length = 0;
+
+    while(source[length])
+    {
+        length++;
+    }
+
+
+    dest = MAlloc(length + 1);
+
+    if(!dest)
+        return NULL;
+
+
+    for(i = 0; i < length; i++)
+    {
+        dest[i] = source[i];
+    }
+
+
+    dest[length] = 0;
+
+
+    return dest;
+}

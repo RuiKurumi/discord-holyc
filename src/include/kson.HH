@@ -21,6 +21,14 @@ class KSONValue
     U8 *key;
 };
 
+class KSONBuffer
+{
+    U8 *data;
+    I64 length;
+    I64 capacity;
+
+};
+
 KSONValue *KSONParse(
     U8 *text
 );
@@ -36,6 +44,69 @@ U8 *KSONStringify(
 
 U0 KSONFree(
     KSONValue *value
+);
+
+KSONBuffer *KSONBufferCreate()
+{
+    KSONBuffer *buffer;
+
+    buffer = MAlloc(sizeof(KSONBuffer));
+
+    if(!buffer)
+        return NULL;
+
+
+    buffer->capacity = 256;
+    buffer->length = 0;
+
+    buffer->data = MAlloc(
+        buffer->capacity
+    );
+
+
+    if(!buffer->data)
+    {
+        Free(buffer);
+        return NULL;
+    }
+
+
+    buffer->data[0] = 0;
+
+
+    return buffer;
+}
+
+U0 KSONBufferAppend(
+    KSONBuffer *buffer,
+    U8 *text
+);
+
+U0 KSONBufferAppendChar(
+    KSONBuffer *buffer,
+    U8 character
+)
+{
+    if(buffer->length + 2 >= buffer->capacity)
+    {
+        buffer->capacity *= 2;
+
+        buffer->data = ReAlloc(
+            buffer->data,
+            buffer->capacity
+        );
+    }
+
+
+    buffer->data[buffer->length] = character;
+
+    buffer->length++;
+
+    buffer->data[buffer->length] = 0;
+}
+
+U8 *KSONBufferFinish(
+    KSONBuffer *buffer
 );
 
 #endif

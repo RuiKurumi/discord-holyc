@@ -12,8 +12,17 @@ extern "c" I32 snprintf(
 I32 Main(I32 argc, U8 **argv)
 {
     KSONValue *root;
+    U8 *json;
 
-    root = KSONParse("\"Hello DiscordHC\"");
+
+    root = KSONParse(
+    "[1,2,3]"
+    );
+
+    json = KSONStringify(root);
+
+    Print(json);
+   
 
     if(!root)
     {
@@ -21,20 +30,28 @@ I32 Main(I32 argc, U8 **argv)
         return 1;
     }
 
-    Print(root->string_value);
+    
+
+    Print("Parse succeeded\n");
+
+
+    json = KSONStringify(root);
+
+
+    if(!json)
+    {
+        Print("Stringify failed\n");
+
+        KSONFree(root);
+
+        return 1;
+    }
+
     Print("\n");
+
 
     KSONFree(root);
 
-    U8 output[64];
-
-    snprintf(
-        output,
-        sizeof(output),
-        "Parsed number: %lld\n",
-        root->number_value
-    );
-    Print(output);
 
     return 0;
 }

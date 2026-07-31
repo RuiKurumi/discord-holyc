@@ -10,4 +10,9 @@ I32 StrCompare(
     U8 *a,
     U8 *b
 );
+
+U8 *StrCopy(
+    U8 *source
+);
+
 #endif
