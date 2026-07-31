@@ -34,10 +34,10 @@ I'm still in the process of applying Discord's Protocol over the TLS/Websocket m
 | ---- | ---- |
 |✔ |ParseNumber |
 |✔ |ParseString |
-|⬜|ParseObject |
-|⬜|ParseNull |
-|⬜|ParseBoolean |
-|⬜|ParseArray |
+|✔|ParseObject |
+|✔|ParseNull |
+|✔|ParseBoolean |
+|✔|ParseArray |
 |⬜|KSONStringify |
 
 |Progress|Gateway|
