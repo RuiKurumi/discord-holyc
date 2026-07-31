@@ -29,3 +29,19 @@ Bool StrContains(
 
     return FALSE;
 }
+I32 StrCompare(
+    U8 *a,
+    U8 *b
+)
+{
+    while(*a && *b)
+    {
+        if(*a != *b)
+            return *a - *b;
+
+        a++;
+        b++;
+    }
+
+    return *a - *b;
+}

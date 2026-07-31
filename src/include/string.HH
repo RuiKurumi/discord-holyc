@@ -6,4 +6,8 @@ Bool StrContains(
     U8 *needle
 );
 
+I32 StrCompare(
+    U8 *a,
+    U8 *b
+);
 #endif
