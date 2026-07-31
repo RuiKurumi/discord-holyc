@@ -2,4 +2,21 @@
 
 
 
-Holy C, anyone?
+<h1 align="center" font-size=20px>
+  Holy C, anyone?
+</h1>
+
+
+
+
+# 🌌 Okay, Seriously though;
+----
+
+## This is an AI-assisted implementation of a discord wrapper using the HolyC Library from Terry A. Davis and the HolyC Compiler Library from James Barford. 
+
+- The main.c has been modified to apply openSSL methods. Therefore you will have to replace the main.c after cloning the compiler with git.
+
+
+-----
+
+I'm still in the process of applying Discord's Protocol over the TLS/Websocket methods, so it will likely be still a long time before I can use it for actual applications.
