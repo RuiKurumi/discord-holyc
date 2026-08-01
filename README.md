@@ -9,21 +9,15 @@
 
 
 
-# Okay, Seriously though;
-----
+# Okay, Seriously though.
 
 ## This is an AI-assisted implementation of a discord wrapper using the HolyC Library from Terry A. Davis and the HolyC Compiler Library from James Barford. 
-
-- The main.c has been modified to apply openSSL methods. Therefore you will have to replace the main.c after cloning the compiler with git.
-
-
+- I uploaded the modified main.c with -lssl and -lcrypyto. Therefore you will have to replace the main.c after cloning the compiler with git. I don't bear any responsibility if it breaks on you.
 -----
-
-I'm still in the process of applying Discord's Protocol over the TLS/Websocket methods, so it will likely be still a long time before I can use it for actual applications.
 
 
 ## Roadmap
-----
+
 |Progress|Base Part|
 | ---- | ---- |
 |✔|TLS|
@@ -40,6 +34,22 @@ I'm still in the process of applying Discord's Protocol over the TLS/Websocket m
 |✔|ParseArray |
 |✔|KSONStringify (QoL) |
 
+
+
+## Pause, What's KSON?
+<img width="480" height="480" alt="4757c55afd6969afc69c0fe35c575843" src="https://github.com/user-attachments/assets/89ab8259-bed3-4493-afc9-ff28edc6378a" /><br>
+  - KSON.
+
+## KSON (KSON Script Object Notation) is a JSON Processor and Parser inspired by a mistake of mine
+<img src="https://cdn.discordapp.com/attachments/1236723037303214241/1532755229316092025/image.png?ex=6a6ea9cb&is=6a6d584b&hm=2f818a3f96e8669ead43dd131cca7d4883069bbd09892377fe48dcad31dc0afa"><br>
+and built with Holy C specifically for this repository.
+
+Yeah, I kinda wanna end it all.
+
+
+-----
+
+
 v---We are Here---V
 |Progress|Gateway|
 | ---- | ---- |
@@ -53,13 +63,3 @@ v---We are Here---V
 |⬜|Event dispatcher |
 |⬜|Bot API |
 
-# So what the fuck is KSON?
-----
-<img width="736" height="736" alt="4757c55afd6969afc69c0fe35c575843" src="https://github.com/user-attachments/assets/89ab8259-bed3-4493-afc9-ff28edc6378a" /><br>
-  - KSON.
-
-## KSON (KSON Script Object Notation) is a JSON Processor and Parser inspired by a mistake of mine
-<img src="https://cdn.discordapp.com/attachments/1236723037303214241/1532755229316092025/image.png?ex=6a6ea9cb&is=6a6d584b&hm=2f818a3f96e8669ead43dd131cca7d4883069bbd09892377fe48dcad31dc0afa"><br>
-and built with Holy C specifically for this repository.
-
-Yeah, I kinda wanna end it all.
