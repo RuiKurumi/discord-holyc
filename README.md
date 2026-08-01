@@ -55,7 +55,7 @@ v---We are Here---V
 
 # So what the fuck is KSON?
 ----
-https://static.wikia.nocookie.net/virtualyoutuber/images/6/63/Kson_-_Portrait.png/revision/latest?cb=20211017015524
+https://i.namu.wiki/i/OH67MvTBw_Vh1ttkn4dydkAiqVUzApSyN8r02e8abLJ_dhLYjQs0G2Liw_6NfkTc1DZvynNLb3z319LoQGCEPdau16cp5Vb2zRCg9kS4jl8Y0b2SSpWuJeu0-zZdgqSWK6nyy7TQKK38s0H2y-nKMA.webp
 ## KSON (KSON Script Object Notation) is just a custom JSON Processor and Parser built with HolyC and for this repository specifically.
 
 It's just JSON with microtransaction clothes.
