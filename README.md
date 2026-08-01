@@ -55,7 +55,11 @@ v---We are Here---V
 
 # So what the fuck is KSON?
 ----
+<img width="736" height="736" alt="4757c55afd6969afc69c0fe35c575843" src="https://github.com/user-attachments/assets/89ab8259-bed3-4493-afc9-ff28edc6378a" /><br>
+  - KSON.
 
-## KSON (KSON Script Object Notation) is just a custom JSON Processor and Parser built with HolyC and for this repository specifically.
+## KSON (KSON Script Object Notation) is a JSON Processor and Parser inspired by a mistake of mine
+<img src="https://cdn.discordapp.com/attachments/1236723037303214241/1532755229316092025/image.png?ex=6a6ea9cb&is=6a6d584b&hm=2f818a3f96e8669ead43dd131cca7d4883069bbd09892377fe48dcad31dc0afa"><br>
+and built with Holy C specifically for this repository.
 
-It's just JSON with microtransaction clothes.
+Yeah, I kinda wanna end it all.
