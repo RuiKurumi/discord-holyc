@@ -55,6 +55,6 @@ v---We are Here---V
 
 # So what the fuck is KSON?
 ----
-## KSON (Katsuragi Script Object Notation) is just a custom JSON Processor and Parser built with HolyC and for this repository specifically.
+## KSON (KSON Script Object Notation) is just a custom JSON Processor and Parser built with HolyC and for this repository specifically.
 
 It's just JSON with microtransaction clothes.
