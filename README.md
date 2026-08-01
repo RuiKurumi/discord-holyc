@@ -38,8 +38,9 @@ I'm still in the process of applying Discord's Protocol over the TLS/Websocket m
 |✔|ParseNull |
 |✔|ParseBoolean |
 |✔|ParseArray |
-|90%|KSONStringify |
+|✔|KSONStringify (QoL) |
 
+v---We are Here---V
 |Progress|Gateway|
 | ---- | ---- |
 |⬜|Gateway Hello |
