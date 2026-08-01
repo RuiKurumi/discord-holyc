@@ -11,47 +11,34 @@ extern "c" I32 snprintf(
 
 I32 Main(I32 argc, U8 **argv)
 {
-    KSONValue *root;
+   
+    KSONValue *value;
     U8 *json;
 
+    /* Boolean */
 
-    root = KSONParse(
-    "[1,2,3]"
-    );
+    value = KSONCreateBoolean(TRUE);
 
-    json = KSONStringify(root);
+    json = KSONStringify(value);
 
     Print(json);
-   
-
-    if(!root)
-    {
-        Print("Parse failed\n");
-        return 1;
-    }
-
-    
-
-    Print("Parse succeeded\n");
-
-
-    json = KSONStringify(root);
-
-
-    if(!json)
-    {
-        Print("Stringify failed\n");
-
-        KSONFree(root);
-
-        return 1;
-    }
-
     Print("\n");
 
+    Free(json);
+    KSONFree(value);
 
-    KSONFree(root);
+    /* Null */
 
+    value = KSONCreateNull();
+
+    json = KSONStringify(value);
+
+    Print(json);
+    Print("\n");
+
+    Free(json);
+    KSONFree(value);
 
     return 0;
-}
+} //practically speaking I'm just having a very complex
+// masochism exercise

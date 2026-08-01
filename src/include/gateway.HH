@@ -1,6 +1,21 @@
-#include "../include/gateway.HH"
-#include "../include/kson.HH"
-#include "../include/print.HH"
+#ifndef GATEWAY_HH
+#define GATEWAY_HH
+
+#include "../include/websocket.HH"
+
+class Gateway
+{
+    WebSocket *socket;
+
+    I64 heartbeat_interval;
+    I64 sequence;
+
+    Bool ready;
+};
+
+Gateway *GatewayConnect(
+    U8 *token
+);
 
 Gateway *GatewayConnect(
     U8 *token
@@ -29,3 +44,18 @@ Gateway *GatewayConnect(
 
     return gateway;
 }
+
+U8 *GatewayReceive(
+    Gateway *gateway
+);
+
+Bool GatewaySend(
+    Gateway *gateway,
+    U8 *text
+);
+
+U0 GatewayDisconnect(
+    Gateway *gateway
+);
+
+#endif

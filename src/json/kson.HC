@@ -8,6 +8,7 @@
    Private helper functions
    =========================== */
 
+//parsing
 U8 *SkipWhitespace(
     U8 *text
 );
@@ -57,6 +58,43 @@ U8 *KSONConcat(
 U8 *KSONStringifyArray(
     KSONValue *value
 );
+
+
+//creating
+KSONValue *CreateValue(
+    I64 type
+);
+
+KSONValue *KSONCreateObject()
+{
+    return CreateValue(KSON_OBJECT);
+}
+KSONValue *KSONCreateArray()
+{
+    return CreateValue(KSON_ARRAY);
+}
+KSONValue *KSONCreateString(
+    U8 *text
+);
+KSONValue *KSONCreateNumber();
+KSONValue *KSONCreateBoolean(
+    Bool value
+);
+KSONValue *KSONCreateNull()
+{
+    return CreateValue(KSON_NULL);
+}
+U0 KSONObjectAdd(
+    KSONValue *object,
+    U8 *key,
+    KSONValue *value
+);
+U0 KSONArrayAdd(
+    KSONValue *array,
+    KSONValue *value
+);
+
+
 
 /* ===========================
    Public API
@@ -223,21 +261,10 @@ KSONValue *ParseObject(
     *text = *text + 1;
 
 
-    object = MAlloc(sizeof(KSONValue));
+    object = KSONCreateObject();
 
     if(!object)
         return NULL;
-
-
-    object->type = KSON_OBJECT;
-
-    object->child = NULL;
-    object->next = NULL;
-
-    object->key = NULL;
-    object->string_value = NULL;
-
-    object->number_value = 0;
 
 
     last = NULL;
@@ -381,7 +408,7 @@ KSONValue *ParseString(
     length = *text - start;
 
 
-    value = MAlloc(sizeof(KSONValue));
+    value = CreateValue(KSON_STRING);
 
     if(!value)
         return NULL;
@@ -438,7 +465,7 @@ KSONValue *ParseNumber(
     Bool negative;
 
 
-    value = MAlloc(sizeof(KSONValue));
+    value = CreateValue(KSON_NUMBER);
 
 
     if(!value)
@@ -497,9 +524,6 @@ KSONValue *ParseNull(
     U8 **text
 )
 {
-    KSONValue *value;
-
-
     if(
         (*text)[0] != 'n' ||
         (*text)[1] != 'u' ||
@@ -510,29 +534,9 @@ KSONValue *ParseNull(
         return NULL;
     }
 
-
     *text = *text + 4;
 
-
-    value = MAlloc(sizeof(KSONValue));
-
-    if(!value)
-        return NULL;
-
-
-    value->type = KSON_NULL;
-
-    value->string_value = NULL;
-
-    value->number_value = 0;
-
-    value->child = NULL;
-    value->next = NULL;
-
-    value->key = NULL;
-
-
-    return value;
+    return KSONCreateNull();
 }
 
 
@@ -581,7 +585,7 @@ KSONValue *ParseBoolean(
     }
 
 
-    value = MAlloc(sizeof(KSONValue));
+    value = KSONCreateBoolean(result);
 
     if(!value)
         return NULL;
@@ -621,24 +625,10 @@ KSONValue *ParseArray(
     *text = *text + 1;
 
 
-    array = MAlloc(sizeof(KSONValue));
+    array = KSONCreateArray();
 
     if(!array)
         return NULL;
-
-
-    array->type = KSON_ARRAY;
-
-
-    array->child = NULL;
-    array->next = NULL;
-
-
-    array->key = NULL;
-
-    array->string_value = NULL;
-
-    array->number_value = 0;
 
 
     last = NULL;
@@ -715,13 +705,28 @@ U8 *KSONStringify(
     KSONValue *value
 )
 {
+
     if(!value)
         return NULL;
 
 
     if(value->type == KSON_NULL)
     {
-        return "null";
+        U8 *output;
+        output = MAlloc(5);
+
+        if(!output)
+            return NULL;
+
+        output[0] = 'n';
+        output[1] = 'u';
+        output[2] = 'l';
+        output[3] = 'l';
+        output[4] = 0;
+
+
+
+        return output;
     }
 
     if(value->type == KSON_STRING)
@@ -774,10 +779,33 @@ U8 *KSONStringify(
 
     if(value->type == KSON_BOOLEAN)
     {
-        if(value->number_value)
-            return "true";
+        U8 *output;
 
-        return "false";
+        
+
+        if(value->number_value)
+        {
+            output = MAlloc(5);
+
+            output[0] = 't';
+            output[1] = 'r';
+            output[2] = 'u';
+            output[3] = 'e';
+            output[4] = 0;
+
+            return output;
+        }
+
+    output = MAlloc(6);
+
+    output[0] = 'f';
+    output[1] = 'a';
+    output[2] = 'l';
+    output[3] = 's';
+    output[4] = 'e';
+    output[5] = 0;
+
+    return output;
     }
 
     if(value->type == KSON_NUMBER)
@@ -802,183 +830,364 @@ U8 *KSONStringifyObject(
 )
 {
     KSONValue *child;
-
-    U8 *output;
-
-    I64 length;
-    I64 i;
-
+    KSONBuffer *buffer;
+    U8 *val;
 
     if(!value)
         return NULL;
 
-
     if(value->type != KSON_OBJECT)
         return NULL;
 
+    buffer = KSONBufferCreate();
 
-    output = MAlloc(4096);
-
-    if(!output)
+    if(!buffer)
         return NULL;
 
-
-    length = 0;
-
-
-    output[length++] = '{';
-
+    KSONBufferAppendChar(
+        buffer,
+        '{'
+    );
 
     child = value->child;
 
-
     while(child)
     {
-        U8 *key;
-        U8 *val;
-
-
-        key = KSONStringify(
-            KSONParse(
-                "\"\""
-            )
-        );
-
-
-        /*
-            Temporary:
-            replace this once we add a direct string helper.
-        */
-
-
-        val = KSONStringify(child);
-
-
         if(child->key)
         {
-            output[length++] = '"';
+            KSONBufferAppendChar(
+                buffer,
+                '"'
+            );
 
+            KSONBufferAppend(
+                buffer,
+                child->key
+            );
 
-            i = 0;
+            KSONBufferAppendChar(
+                buffer,
+                '"'
+            );
 
-            while(child->key[i])
+            KSONBufferAppendChar(
+                buffer,
+                ':'
+            );
+
+            val = KSONStringify(child);
+
+            if(!val)
             {
-                output[length++] = child->key[i];
-
-                i++;
+                Free(buffer->data);
+                Free(buffer);
+                return NULL;
             }
 
+            KSONBufferAppend(
+                buffer,
+                val
+            );
 
-            output[length++] = '"';
-
-            output[length++] = ':';
-
-
-            i = 0;
-
-            while(val[i])
-            {
-                output[length++] = val[i];
-
-                i++;
-            }
+            Free(val);
         }
-
 
         child = child->next;
 
-
         if(child)
         {
-            output[length++] = ',';
+            KSONBufferAppendChar(
+                buffer,
+                ','
+            );
         }
     }
 
+    KSONBufferAppendChar(
+        buffer,
+        '}'
+    );
 
-    output[length++] = '}';
-
-    output[length] = 0;
-
-
-    return output;
+    return KSONBufferFinish(
+        buffer
+    );
 }
 U8 *KSONStringifyArray(
     KSONValue *value
 )
 {
     KSONValue *child;
-
-    U8 *output;
-
-    I64 length;
-    I64 i;
-
+    KSONBuffer *buffer;
+    U8 *item;
 
     if(!value)
         return NULL;
 
-
     if(value->type != KSON_ARRAY)
         return NULL;
 
+    buffer = KSONBufferCreate();
 
-    output = MAlloc(4096);
-
-    if(!output)
+    if(!buffer)
         return NULL;
 
-
-    length = 0;
-
-
-    output[length++] = '[';
-
+    KSONBufferAppendChar(
+        buffer,
+        '['
+    );
 
     child = value->child;
 
-
     while(child)
     {
-        U8 *item;
-
-
         item = KSONStringify(child);
-
 
         if(!item)
         {
-            Free(output);
+            Free(buffer->data);
+            Free(buffer);
             return NULL;
         }
 
-
-        i = 0;
-
-        while(item[i])
-        {
-            output[length++] = item[i];
-
-            i++;
-        }
-
+        KSONBufferAppend(
+            buffer,
+            item
+        );
 
         Free(item);
 
-
         child = child->next;
-
 
         if(child)
         {
-            output[length++] = ',';
+            KSONBufferAppendChar(
+                buffer,
+                ','
+            );
         }
     }
 
+    KSONBufferAppendChar(
+        buffer,
+        ']'
+    );
 
-    output[length++] = ']';
+    return KSONBufferFinish(
+        buffer
+    );
+}
+KSONValue *CreateValue(
+    I64 type
+)
+{
+    KSONValue *value;
 
-    output[length] = 0;
+    value = MAlloc(sizeof(KSONValue));
 
+    if(!value)
+        return NULL;
 
-    return output;
+    value->type = type;
+
+    value->string_value = NULL;
+    value->number_value = 0;
+
+    value->child = NULL;
+    value->next = NULL;
+
+    value->key = NULL;
+
+    return value;
+}
+U0 KSONBufferAppend(
+    KSONBuffer *buffer,
+    U8 *text
+)
+{
+    while(*text)
+    {
+        KSONBufferAppendChar(
+            buffer,
+            *text
+        );
+
+        text++;
+    }
+}
+U8 *KSONBufferFinish(
+    KSONBuffer *buffer
+)
+{
+    U8 *data;
+
+    data = buffer->data;
+
+    Free(buffer);
+
+    return data;
+}
+KSONValue *KSONCreateString(
+    U8 *text
+)
+{
+    KSONValue *value;
+    I64 length;
+    I64 i;
+
+    if(!text)
+    {
+        return NULL;
+    }
+
+    value = CreateValue(KSON_STRING);
+
+    if(!value)
+        return NULL;
+    
+    length = 0;
+
+    while(text[length])
+    {
+        length++;
+    }
+    
+    value->string_value = MAlloc(
+        length + 1
+    );
+
+    if(!value->string_value)
+    {
+        Free(value);
+        return NULL;
+    }
+
+    for(i = 0; i < length; i++)
+    {
+        value->string_value[i] = text[i];
+    }
+
+    value->string_value[length] = 0;
+
+    return value;
+}
+KSONValue *KSONCreateNumber(
+    I64 number
+)
+{
+    KSONValue *value;
+
+    value = CreateValue(KSON_NUMBER);
+
+    if(!value)
+        return NULL;
+
+    value->number_value = number;
+
+    return value;
+}
+KSONValue *KSONCreateBoolean(
+    Bool value
+)
+{
+    KSONValue *boolean;
+
+    boolean = CreateValue(KSON_BOOLEAN);
+
+    if(!boolean)
+        return NULL;
+
+    boolean->number_value = value;
+
+    return boolean;
+}
+U0 KSONArrayAdd(
+    KSONValue *array,
+    KSONValue *value
+)
+{
+    KSONValue *current;
+
+    if(!array)
+        return;
+
+    if(!value)
+        return;
+
+    if(array->type != KSON_ARRAY)
+        return;
+
+    value->next = NULL;
+
+    if(!array->child)
+    {
+        array->child = value;
+        return;
+    }
+
+    current = array->child;
+
+    while(current->next)
+    {
+        current = current->next;
+    }
+
+    current->next = value;
+}
+U0 KSONObjectAdd(
+    KSONValue *object,
+    U8 *key,
+    KSONValue *value
+)
+{
+    KSONValue *current;
+    I64 length;
+    I64 i;
+
+    if(!object)
+        return;
+
+    if(!value)
+        return;
+
+    if(!key)
+        return;
+
+    if(object->type != KSON_OBJECT)
+        return;
+
+    length = 0;
+
+    while(key[length])
+    {
+        length++;
+    }
+
+    value->key = MAlloc(length + 1);
+
+    if(!value->key)
+        return;
+
+    for(i = 0; i < length; i++)
+    {
+        value->key[i] = key[i];
+    }
+
+    value->key[length] = 0;
+
+    value->next = NULL;
+
+    if(!object->child)
+    {
+        object->child = value;
+        return;
+    }
+
+    current = object->child;
+
+    while(current->next)
+    {
+        current = current->next;
+    }
+
+    current->next = value;
 }

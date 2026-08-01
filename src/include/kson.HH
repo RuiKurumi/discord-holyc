@@ -45,6 +45,42 @@ U8 *KSONStringify(
 U0 KSONFree(
     KSONValue *value
 );
+//KSON still
+KSONValue *KSONCreateObject();
+
+KSONValue *KSONCreateArray(
+    KSONValue *array,
+    KSONValue *value
+);
+
+KSONValue *KSONCreateString(
+    U8 *text
+);
+
+KSONValue *KSONCreateNumber(
+    I64 value
+);
+
+KSONValue *KSONCreateBoolean(
+    Bool value
+);
+
+KSONValue *KSONCreateNull();
+
+
+U0 KSONObjectAdd(
+    KSONValue *object,
+    U8 *key,
+    KSONValue *value
+); 
+
+U0 KSONArrayAdd(
+    KSONValue *array,
+    KSONValue *value
+    //at least it isn't a queue bruh
+);
+
+
 
 KSONBuffer *KSONBufferCreate()
 {
@@ -87,17 +123,25 @@ U0 KSONBufferAppendChar(
     U8 character
 )
 {
+    U8 *newData;
+
     if(buffer->length + 2 >= buffer->capacity)
     {
         buffer->capacity *= 2;
-
-        buffer->data = ReAlloc(
+        
+        newData = ReAlloc(
             buffer->data,
             buffer->capacity
         );
+
+        if(!newData)
+        {
+            return;
+        }
+    buffer->data = newData;
     }
 
-
+    
     buffer->data[buffer->length] = character;
 
     buffer->length++;
