@@ -50,13 +50,14 @@ Yeah, I kinda wanna end it all.
 -----
 
 
-v---We are Here---V
+
 |Progress|Gateway|
 | ---- | ---- |
-|⬜|Gateway Hello |
-|⬜|Heartbeat |
-|⬜|Identify |
+|✔|Gateway Hello |
+|✔|Heartbeat |
+|✔|Identify |
 
+v---We are Here---V
 |Progress|API|
 | ---- | ---- |
 |⬜|READY event |
