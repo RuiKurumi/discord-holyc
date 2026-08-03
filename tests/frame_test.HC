@@ -1,3 +1,0 @@
-EncodeFrame(
-    "Hello"
-)
