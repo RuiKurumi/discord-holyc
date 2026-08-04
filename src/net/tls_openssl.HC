@@ -98,10 +98,10 @@ TLSContext *TLSConnect(U8 *host, I64 port)
     }
 
     tls->established = TRUE;
-
+    Print("TLS handshake succeeded\n");
     return tls;
 }
-Print("TLS handshake succeeded\n");
+
 
 I64 TLSSend(
     TLSContext *ctx,

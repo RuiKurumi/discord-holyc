@@ -9,13 +9,23 @@ class Gateway
 
     U8 *token;
     U8 *session_id;
+
     I64 heartbeat_interval;
     I64 sequence;
 
     Bool ready;
     Bool reconnect_requested;
+
+    I64 last_heartbeat_sent;
+    I64 last_heartbeat_ack;
+
+    Bool heartbeat_received;
     
 };
+
+Bool GatewayRun(
+    Gateway *gateway
+);
 
 Gateway *GatewayConnect(
     U8 *token
@@ -31,6 +41,14 @@ Bool GatewaySend(
 );
 
 U0 GatewayDisconnect(
+    Gateway *gateway
+);
+
+Bool GatewayPoll(
+    Gateway *gateway
+);
+
+U0 GatewayFree(
     Gateway *gateway
 );
 

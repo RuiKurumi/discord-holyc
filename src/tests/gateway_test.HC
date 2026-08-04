@@ -17,79 +17,26 @@
 #include "../net/tls_openssl.HC"
 #include "../net/websocket.HC"
 
-extern "c" I32 printf(U8 *, ...);
 
-I32 Main()
+U0 main()
 {
-    Gateway gateway;
+    Gateway *gateway;
 
-    GatewayPacket *packet;
-
-    KSONValue *data;
-
-    Print("READY TEST\n");
-
-    gateway.sequence = -1;
-    gateway.ready = FALSE;
-    gateway.session_id = NULL;
-
-    packet = GatewayPacketCreate(0);
-
-    packet->s = 123;
-
-    packet->t = StrCopy("READY");
-
-    data = KSONCreateObject();
-
-    KSONObjectAdd(
-        data,
-        "session_id",
-        KSONCreateString("abcdef123")
+    gateway = GatewayConnect(
+        "Bot YOUR_TOKEN_HERE"
     );
 
-    packet->d = data;
-
-    GatewayHandleDispatch(
-        &gateway,
-        packet
-    );
-
-    printf(
-        "Sequence: %lld\n",
-        gateway.sequence
-    );
-
-    printf(
-        "Ready: %d\n",
-        gateway.ready
-    );
-
-    printf(
-        "Session: %s\n",
-        gateway.session_id
-    );
-
-    if(
-        gateway.sequence == 123 &&
-        gateway.ready &&
-        StrCompare(
-            gateway.session_id,
-            "abcdef123"
-        ) == 0
-    )
+    if(!gateway)
     {
-        Print("PASS\n");
-    }
-    else
-    {
-        Print("FAIL\n");
+        Print("GatewayConnect failed\n");
+        return;
     }
 
-    GatewayPacketFree(packet);
+    Print("Gateway connected\n");
 
-    if(gateway.session_id)
-        Free(gateway.session_id);
+    GatewayRun(gateway);
 
-    Print("RETURNING\n");
-    return 0;
+    Print("GatewayRun exited\n");
+
+    GatewayFree(gateway);
 }
