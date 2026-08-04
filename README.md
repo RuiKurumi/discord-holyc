@@ -18,7 +18,8 @@
 </p>
 
 <h3 align="center">
-**I wanna cry.** *ScIeNtIfIc pUrPoSes*.
+<strong>I have no tears and I want to cry.</strong><br>
+<i>ScIeNtIfIc pUrPoSes.</i>
 
   Also, in Japanese, Holy シ!!
 </h3>
