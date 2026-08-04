@@ -114,8 +114,61 @@ U8 *GatewayReceive(
         )
     )
     {
+        Print("DecodeWebSocketFrame failed\n");
         return NULL;
     }
+
+    switch(frame.opcode)
+    {
+    case 1: /* Text */
+        break;
+
+    case 8: /* Close */
+        if(frame.opcode == 8)
+            {
+                I64 code;
+
+                Print("Received CLOSE frame\n");
+
+                if(frame.payload_length >= 2)
+                {
+                    code =
+                        (frame.payload[0] << 8) |
+                        frame.payload[1];
+
+                    if(code == 4004)
+                    Print("Authentication failed\n");
+
+                    if(code == 4002)
+                        Print("Decode error\n");
+
+                    if(code == 4008)
+                        Print("Rate limited\n");
+
+                    if(code == 4013)
+                        Print("Invalid intents\n");
+
+                    if(code == 4014)
+                        Print("Disallowed intents\n");
+                }
+
+                return NULL;
+            }
+
+    case 9: /* Ping */
+        Print("Received PING\n");
+        /* TODO: Send Pong */
+        return NULL;
+
+    case 10: /* Pong */
+        Print("Received PONG\n");
+        return NULL;
+
+    default:
+        Print("Unknown WebSocket opcode\n");
+        return NULL;
+    }
+    
 
     json = MAlloc(
         frame.payload_length + 1

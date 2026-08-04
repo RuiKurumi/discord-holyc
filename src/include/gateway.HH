@@ -21,6 +21,9 @@ class Gateway
 
     Bool heartbeat_received;
     
+
+    U8 receiveBuffer[16384];
+    I64 receiveLength;
 };
 
 Bool GatewayRun(

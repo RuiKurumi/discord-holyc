@@ -91,7 +91,7 @@ Bool GatewayHandleHello(
          interval->number_value;
 
     Print("Sending IDENTIFY\n");
-    GatewaySendIdentify(gateway);
+    
     if(!GatewaySendIdentify(gateway))
     {
         Print("Failed to send IDENTIFY\n");

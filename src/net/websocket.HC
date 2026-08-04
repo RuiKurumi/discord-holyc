@@ -203,20 +203,78 @@ I64 WebSocketSend(
 I64 WebSocketReceive(
     WebSocket *ws,
     U8 *buffer,
-    I64 length
+    I64 bufferSize
 )
 {
+    I64 received;
+    I64 payloadLength;
+    I64 offset;
+    I64 more;
+
     if(!ws)
         return -1;
 
     if(!ws->connected)
         return -1;
 
-    return TLSReceive(
+    received = TLSReceive(
         ws->tls,
         buffer,
-        length
+        bufferSize
     );
+
+    if(received <= 0)
+        return received;
+
+    if(received < 2)
+        return -1;
+
+    payloadLength = buffer[1] & 0x7F;
+    offset = 2;
+
+    if(payloadLength == 126)
+    {
+        while(received < 4)
+        {
+            more = TLSReceive(
+                ws->tls,
+                buffer + received,
+                bufferSize - received
+            );
+
+            if(more <= 0)
+                return -1;
+
+            received += more;
+        }
+
+        payloadLength =
+            (buffer[2] << 8) |
+            buffer[3];
+
+        offset = 4;
+    }
+    else if(payloadLength == 127)
+    {
+        /* TODO */
+        return -1;
+    }
+
+    while(received < offset + payloadLength)
+    {
+        more = TLSReceive(
+            ws->tls,
+            buffer + received,
+            bufferSize - received
+        );
+
+        if(more <= 0)
+            return -1;
+
+        received += more;
+    }
+
+    return received;
 }
 
 
@@ -316,60 +374,66 @@ U8 *EncodeWebSocketFrame(
 {
     U8 *frame;
     I64 total;
+    I64 maskOffset;
+    I64 payloadOffset;
 
-
-    /*
-       Client frames always:
-       FIN = 1
-       MASK = 1
-    */
-
-
-    total = length + 6;
-
-
-    frame = MAlloc(total);
-    Print("Payload length: ");
-    
-    if(!frame)
-        return NULL;
-
+ 
     if(length <= 125)
     {
+        total = length + 6;
+
+        frame = MAlloc(total);
+        if(!frame)
+            return NULL;
+
+        frame[0] = 0x80 | opcode;
+        frame[1] = 0x80 | length;
+
+        maskOffset = 2;
+        payloadOffset = 6;
+    }
+    else if(length <= 65535)
+    {
+        total = length + 8;
+
+        frame = MAlloc(total);
+        if(!frame)
+            return NULL;
+
+        frame[0] = 0x80 | opcode;
+        frame[1] = 0x80 | 126;
+
+        frame[2] = (length >> 8) & 0xFF;
+        frame[3] = length & 0xFF;
+
+        maskOffset = 4;
+        payloadOffset = 8;
+    }
+    else
+    {
         Print("Payload too large\n");
-        Free(frame);
         return NULL;
     }
-
-    frame[0] = 0x80 | opcode;
-    frame[1] = 0x80 | length;
-
-    Print("Frame created\n");
-
-
-    /*
-       Fixed mask for initial testing.
-       Later replace with random bytes.
-    */
-
-    frame[2] = 0x12;
-    frame[3] = 0x34;
-    frame[4] = 0x56;
-    frame[5] = 0x78;
 
 
     I64 i;
 
+    frame[maskOffset + 0] = 0x12;
+    frame[maskOffset + 1] = 0x34;
+    frame[maskOffset + 2] = 0x56;
+    frame[maskOffset + 3] = 0x78;
     for(i = 0; i < length; i++)
     {
-        frame[6+i] =
+        frame[payloadOffset + i] =
             payload[i] ^
-            frame[2+(i%4)];
+            frame[maskOffset + (i % 4)];
     }
 
 
     *out_length = total;
 
+    if(!frame)
+        return NULL;
 
     return frame;
 }
@@ -383,7 +447,10 @@ Bool DecodeWebSocketFrame(
     I64 offset;
 
     if(length < 2)
+    {
+         Print("FAIL: length < 2\n");
         return FALSE;
+    }
 
     frame->opcode = buffer[0] & 0x0F;
 
@@ -394,8 +461,10 @@ Bool DecodeWebSocketFrame(
     if(frame->payload_length == 126)
     {
         if(length < 4)
+        {
+            Print("FAIL: truncated 126 header\n");
             return FALSE;
-
+        }
         frame->payload_length =
             (buffer[2] << 8) |
             buffer[3];
@@ -404,13 +473,15 @@ Bool DecodeWebSocketFrame(
     }
     else if(frame->payload_length == 127)
     {
-        /* Large payloads not yet implemented */
+        Print("FAIL: got 127-length frame\n");
         return FALSE;
     }
 
     if(offset + frame->payload_length > length)
+    {
+        Print("FAIL: incomplete frame\n");
         return FALSE;
-
+    }
     frame->payload = buffer + offset;
 
     return TRUE;

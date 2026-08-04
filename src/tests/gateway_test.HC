@@ -23,7 +23,7 @@ U0 main()
     Gateway *gateway;
 
     gateway = GatewayConnect(
-        "Bot YOUR_TOKEN_HERE"
+        "Bot "
     );
 
     if(!gateway)
