@@ -2,6 +2,45 @@
 #include "../include/websocket.HH"
 #include "../include/string.HH"
 
+
+
+Bool GatewayRun(
+    Gateway *gateway
+)
+{
+    if(!gateway)
+        return FALSE;
+
+    while(TRUE)
+    {
+        if(!GatewayPoll(gateway))
+        {
+            Print("Gateway disconnected\n");
+            return FALSE;
+        }
+
+        /* Heartbeat logic goes here */
+
+        if(gateway->ready)
+        {
+            if(
+                TimeNow() >=
+                gateway->last_heartbeat_sent +
+                (gateway->heartbeat_interval / 1000)
+            )
+            {
+                if(!gateway->heartbeat_received)
+                {
+                    Print("Heartbeat timeout\n");
+                    return FALSE;
+                }
+
+                GatewaySendHeartbeat(gateway);
+            }
+        }
+    }
+}
+
 Gateway *GatewayConnect(
     U8 *token
 )
@@ -108,6 +147,7 @@ Bool GatewaySend(
     if(!gateway->socket)
         return FALSE;
 
+
     return
         WebSocketSend(
             gateway->socket,
@@ -136,6 +176,63 @@ U0 GatewayDisconnect(
 
     if(gateway->token)
         Free(gateway->token);
+
+    Free(gateway);
+}
+
+Bool GatewayPoll(
+    Gateway *gateway
+)
+{
+    U8 *json;
+    GatewayPacket *packet;
+
+    if(!gateway)
+        return FALSE;
+
+    json = GatewayReceive(gateway);
+
+    if(!json)
+        return FALSE;
+
+    packet = GatewayPacketParse(json);
+
+    Free(json);
+
+    if(!packet)
+        return TRUE;
+
+    GatewayHandlePacket(
+        gateway,
+        packet
+    );
+
+    GatewayPacketFree(packet);
+
+    return TRUE;
+}
+
+U0 GatewayFree(
+    Gateway *gateway
+)
+{
+    if(!gateway)
+        return;
+
+    if(gateway->socket)
+    {
+        WebSocketClose(gateway->socket);
+    }
+
+    if(gateway->token)
+    {
+        Free(gateway->token);
+    }
+
+    if(gateway->session_id)
+    {
+        Free(gateway->session_id);
+    }
 
     Free(gateway);
 }

@@ -23,6 +23,10 @@ class Gateway
     
 };
 
+Bool GatewayRun(
+    Gateway *gateway
+);
+
 Gateway *GatewayConnect(
     U8 *token
 );
@@ -37,6 +41,14 @@ Bool GatewaySend(
 );
 
 U0 GatewayDisconnect(
+    Gateway *gateway
+);
+
+Bool GatewayPoll(
+    Gateway *gateway
+);
+
+U0 GatewayFree(
     Gateway *gateway
 );
 

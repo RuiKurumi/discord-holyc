@@ -90,6 +90,7 @@ Bool GatewayHandleHello(
     gateway->heartbeat_interval =
          interval->number_value;
 
+    Print("Sending IDENTIFY\n");
     GatewaySendIdentify(gateway);
     if(!GatewaySendIdentify(gateway))
     {
@@ -322,6 +323,7 @@ Bool GatewaySendIdentify(
         json
     ))
     {
+        Print("IDENTIFY failed\n");
         Free(json);
         GatewayPacketFree(packet);
         return FALSE;
@@ -329,7 +331,7 @@ Bool GatewaySendIdentify(
 
     Free(json);
     GatewayPacketFree(packet);
-
+    Print("IDENTIFY sent\n");
     return TRUE;
 }
 

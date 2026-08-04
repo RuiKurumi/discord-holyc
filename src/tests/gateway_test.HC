@@ -18,41 +18,25 @@
 #include "../net/websocket.HC"
 
 
-extern "c" I32 printf(U8 *, ...);
-
-I32 Main()
+U0 main()
 {
     Gateway *gateway;
-    U8 *json;
-    GatewayPacket *packet;
 
-gateway = GatewayConnect("Bot TEST_TOKEN");
+    gateway = GatewayConnect(
+        "Bot YOUR_TOKEN_HERE"
+    );
 
-if(!gateway)
-{
-    Print("GatewayConnect FAILED\n");
-    return 1;
-}
+    if(!gateway)
+    {
+        Print("GatewayConnect failed\n");
+        return;
+    }
 
-json = GatewayReceive(gateway);
+    Print("Gateway connected\n");
 
-if(!json)
-{
-    Print("GatewayReceive FAILED\n");
-    return 1;
-}
+    GatewayRun(gateway);
 
-Print(json);
-Print("Received:\n");
-packet = GatewayPacketParse(json);
+    Print("GatewayRun exited\n");
 
-if(!packet)
-{
-    Print("Parse failed\n");
-    return 1;
-}
-
-printf("Opcode: %lld\n", packet->op);
-
-    return 0;
+    GatewayFree(gateway);
 }

@@ -40,18 +40,37 @@ GatewayPacket *GatewayPacketParse(
     GatewayPacket *packet;
 
     root = KSONParse(json);
+    Print("KSONParse returned\n");
 
     if(!root)
         return NULL;
 
+    Print("Getting op\n");
     op = KSONGet(root, "op");
 
     if(!op)
     {
+        Print("op is NULL\n");
         KSONFree(root);
         return NULL;
     }
+    else
+    {
+        Print("op exists\n");
 
+        if(op->type == KSON_NUMBER)
+        {
+            Print("op is number\n");
+        }
+        else
+        {
+            Print("op NOT number\n");
+        }
+
+        Print("About to read number_value\n");
+         
+    }
+    Print("Creating packet\n");
     packet = GatewayPacketCreate(
         op->number_value
     );
@@ -61,33 +80,42 @@ GatewayPacket *GatewayPacketParse(
         KSONFree(root);
         return NULL;
     }
-
+    Print("Detaching d\n");
     packet->d = DetachObjectField(
         root,
         "d"
     );
-
+    Print("Getting s\n");
     s = KSONGet(root, "s");
 
     if(s)
+    {
         packet->s = s->number_value;
-
-    t = DetachObjectField(
+        Print("Detaching t\n");
+        t = DetachObjectField(
         root,
         "t"
-    );
-
+        );
+    }
     if(t)
     {
-        packet->t = StrCopy(
+        if(
+            t->type == KSON_STRING &&
             t->string_value
-        );
+        )
+        {
+            packet->t = StrCopy(
+                t->string_value
+            );
+        }
 
         KSONFree(t);
     }
-
+    
+    Print("Freeing root\n");
     KSONFree(root);
 
+    Print("Returning packet\n");
     return packet;
 }
 

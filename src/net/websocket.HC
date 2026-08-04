@@ -329,11 +329,12 @@ U8 *EncodeWebSocketFrame(
 
 
     frame = MAlloc(total);
-
+    Print("Payload length: ");
+    
     if(!frame)
         return NULL;
 
-    if(length > 125)
+    if(length <= 125)
     {
         Print("Payload too large\n");
         Free(frame);
