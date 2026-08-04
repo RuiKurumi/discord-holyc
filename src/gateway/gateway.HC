@@ -32,6 +32,10 @@ Gateway *GatewayConnect(
     gateway->ready = FALSE;
     gateway->reconnect_requested = FALSE;
 
+    gateway->last_heartbeat_sent = 0;
+    gateway->last_heartbeat_ack = 0;
+    gateway->heartbeat_received = TRUE;
+
     return gateway;
 }
 

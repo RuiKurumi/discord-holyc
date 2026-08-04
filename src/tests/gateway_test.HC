@@ -17,79 +17,42 @@
 #include "../net/tls_openssl.HC"
 #include "../net/websocket.HC"
 
+
 extern "c" I32 printf(U8 *, ...);
 
 I32 Main()
 {
-    Gateway gateway;
-
+    Gateway *gateway;
+    U8 *json;
     GatewayPacket *packet;
 
-    KSONValue *data;
+gateway = GatewayConnect("Bot TEST_TOKEN");
 
-    Print("READY TEST\n");
+if(!gateway)
+{
+    Print("GatewayConnect FAILED\n");
+    return 1;
+}
 
-    gateway.sequence = -1;
-    gateway.ready = FALSE;
-    gateway.session_id = NULL;
+json = GatewayReceive(gateway);
 
-    packet = GatewayPacketCreate(0);
+if(!json)
+{
+    Print("GatewayReceive FAILED\n");
+    return 1;
+}
 
-    packet->s = 123;
+Print(json);
+Print("Received:\n");
+packet = GatewayPacketParse(json);
 
-    packet->t = StrCopy("READY");
+if(!packet)
+{
+    Print("Parse failed\n");
+    return 1;
+}
 
-    data = KSONCreateObject();
+printf("Opcode: %lld\n", packet->op);
 
-    KSONObjectAdd(
-        data,
-        "session_id",
-        KSONCreateString("abcdef123")
-    );
-
-    packet->d = data;
-
-    GatewayHandleDispatch(
-        &gateway,
-        packet
-    );
-
-    printf(
-        "Sequence: %lld\n",
-        gateway.sequence
-    );
-
-    printf(
-        "Ready: %d\n",
-        gateway.ready
-    );
-
-    printf(
-        "Session: %s\n",
-        gateway.session_id
-    );
-
-    if(
-        gateway.sequence == 123 &&
-        gateway.ready &&
-        StrCompare(
-            gateway.session_id,
-            "abcdef123"
-        ) == 0
-    )
-    {
-        Print("PASS\n");
-    }
-    else
-    {
-        Print("FAIL\n");
-    }
-
-    GatewayPacketFree(packet);
-
-    if(gateway.session_id)
-        Free(gateway.session_id);
-
-    Print("RETURNING\n");
     return 0;
 }

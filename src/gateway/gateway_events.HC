@@ -2,6 +2,9 @@
 #include "../include/gateway_packet.HH"
 #include "../include/kson.HH"
 #include "../include/print.HH"
+#include "../include/time.HH"
+#include "../include/gateway_intents.HH"
+#include "../runtime/time.HC"
 
 
 U0 GatewayHandlePacket(
@@ -86,6 +89,13 @@ Bool GatewayHandleHello(
 
     gateway->heartbeat_interval =
          interval->number_value;
+
+    GatewaySendIdentify(gateway);
+    if(!GatewaySendIdentify(gateway))
+    {
+        Print("Failed to send IDENTIFY\n");
+        return FALSE;
+    }
 
     Print("Gateway HELLO\n");
     Print("Feet Pics recieved\n");
@@ -207,6 +217,8 @@ U0 GatewayHandleHeartbeatAck(
     if(!packet)
         return;
 
+    gateway->last_heartbeat_ack = TimeNow();
+    gateway->heartbeat_received = TRUE;
     Print("Gateway HEARTBEAT ACK\n");
 }
 
@@ -214,7 +226,111 @@ Bool GatewaySendIdentify(
     Gateway *gateway
 )
 {
-    return FALSE;
+    GatewayPacket *packet;
+
+    KSONValue *data;
+    KSONValue *properties;
+
+    U8 *json;
+
+    if(!gateway)
+        return FALSE;
+
+    if(!gateway->token)
+        return FALSE;
+
+    packet = GatewayPacketCreate(2);
+
+    if(!packet)
+        return FALSE;
+
+    data = KSONCreateObject();
+
+    if(!data)
+    {
+        GatewayPacketFree(packet);
+        return FALSE;
+    }
+
+    properties = KSONCreateObject();
+
+    if(!properties)
+    {
+        KSONFree(data);
+        GatewayPacketFree(packet);
+        return FALSE;
+    }
+
+    KSONObjectAdd(
+        data,
+        "token",
+        KSONCreateString(
+            gateway->token
+        )
+    );
+
+    KSONObjectAdd(
+        data,
+        "intents",
+        KSONCreateNumber(
+            GATEWAY_INTENT_GUILDS |
+            GATEWAY_INTENT_GUILD_MESSAGES |
+            GATEWAY_INTENT_MESSAGE_CONTENT
+        )
+    );
+
+    KSONObjectAdd(
+        properties,
+        "os",
+        KSONCreateString("linux")
+    );
+
+    KSONObjectAdd(
+        properties,
+        "browser",
+        KSONCreateString("DiscordHC")
+    );
+
+     KSONObjectAdd(
+        properties,
+        "device",
+        KSONCreateString("DiscordHC")
+    );
+
+    KSONObjectAdd(
+        data,
+        "properties",
+        properties
+    );
+
+    packet->d = data;
+
+    json = GatewayPacketStringify(packet);
+
+    if(!json)
+    {
+        GatewayPacketFree(packet);
+        return FALSE;
+    }
+
+    Print("Sending IDENTIFY.\n");
+    Print(json);
+    Print("\n");
+
+    if(!GatewaySend(
+        gateway,
+        json
+    ))
+    {
+        Free(json);
+        GatewayPacketFree(packet);
+        return FALSE;
+    }
+
+    Free(json);
+    GatewayPacketFree(packet);
+
+    return TRUE;
 }
 
 Bool GatewaySendHeartbeat(
@@ -252,6 +368,9 @@ Bool GatewaySendHeartbeat(
         GatewayPacketFree(packet);
         return FALSE;
     }
+
+    gateway->last_heartbeat_sent = TimeNow();
+    gateway->heartbeat_received = FALSE;
 
     if(!GatewaySend(
         gateway,

@@ -57,7 +57,9 @@ U8 *KSONConcat(
 U8 *KSONStringifyArray(
     KSONValue *value
 );
-
+U8 *KSONBufferFinish(
+    KSONBuffer *buffer
+);
 
 //creating
 KSONValue *CreateValue(
@@ -218,19 +220,26 @@ KSONValue *ParseValue(
 
 
     if(**text == '"')
-        return ParseString(text);
+    {
 
+        
+        Print("Entering ParseString\n");
+        return ParseString(text);
+    }
 
     if(**text == '-' ||
        (**text >= '0' && **text <= '9'))
     {
+        Print("Entering ParseNumber\n");
         return ParseNumber(text);
     }
 
 
     if(**text == '{')
+    {
+        Print("Entering ParseObject\n");
         return ParseObject(text);
-
+    }
 
     if(**text == 'n')
         return ParseNull(text);
@@ -239,11 +248,13 @@ KSONValue *ParseValue(
     if(**text == 't' ||
        **text == 'f')
     {
+        Print("Entering ParseBool\n");
         return ParseBoolean(text);
     }
 
 
     if(**text == '[')
+        Print("Entering ParseArray\n");
         return ParseArray(text);
 
 
@@ -260,25 +271,26 @@ KSONValue *ParseObject(
     KSONValue *key;
     KSONValue *value;
 
-
+    Print("Object A\n");
     if(**text != '{')
         return NULL;
 
-
+    Print("Object B\n");
     *text = *text + 1;
 
-
+    Print("Object C\n");
     object = KSONCreateObject();
 
+    Print("Object D\n");
     if(!object)
         return NULL;
 
-
+    Print("Object E\n");
     last = NULL;
 
 
     *text = SkipWhitespace(*text);
-
+    Print("Object F\n");
 
     if(**text == '}')
     {
@@ -288,11 +300,34 @@ KSONValue *ParseObject(
 
 
     while(TRUE)
-    {
+    {   
+        Print("Loop Start\n");
         *text = SkipWhitespace(*text);
 
+        Print("Before ParseString\n");
 
+        if(!text)
+        {
+            Print("text is NULL\n");
+            return NULL;
+        }
+
+        if(!*text)
+        {
+            Print("*text is NULL\n");
+            return NULL;
+        }
+
+        Print("Current char before ParseString: ");
+
+        U8 temp[2];
+        temp[0] = **text;
+        temp[1] = 0;
+
+        Print(temp);
+        Print("\n");
         key = ParseString(text);
+        Print("After ParseString\n");
 
         if(!key)
         {
@@ -318,8 +353,10 @@ KSONValue *ParseObject(
 
         *text = SkipWhitespace(*text);
 
+        Print("Before ParseValue\n");
 
         value = ParseValue(text);
+        Print("After ParseValue\n");
 
         if(!value)
         {
@@ -369,7 +406,7 @@ KSONValue *ParseObject(
             return NULL;
         }
 
-
+        Print("Before Next Token\n");
         (*text)++;
     }
 
@@ -412,10 +449,9 @@ KSONValue *ParseString(
     }
 
 
-    length = *text - start;
-
 
     value = CreateValue(KSON_STRING);
+   
 
     if(!value)
         return NULL;
@@ -455,7 +491,9 @@ KSONValue *ParseString(
         (*text)++;
     }
 
-
+    Print("ParseStr OK: ");
+    Print(value->string_value);
+    Print("\n");
     return value;
 }
 
@@ -1266,6 +1304,3 @@ U0 KSONBufferAppendChar(
     buffer->data[buffer->length] = 0;
 }
 
-U8 *KSONBufferFinish(
-    KSONBuffer *buffer
-);
