@@ -45,26 +45,26 @@ Because "can HolyC talk to Discord's Gateway" was a question that needed answeri
 
 ## Roadmap
 
-| Progress | Section | Feature |
-| :---: | --- | --- |
-| ✔ | Base | TLS |
-| ✔ | Base | WebSocket handshake |
-| ✔ | Base | WebSocket frames |
-| ✔ | KSON | ParseNumber |
-| ✔ | KSON | ParseString |
-| ✔ | KSON | ParseObject |
-| ✔ | KSON | ParseNull |
-| ✔ | KSON | ParseBoolean |
-| ✔ | KSON | ParseArray |
-| ✔ | KSON | KSONStringify (QoL) |
-| ✔ | Gateway | Hello |
-| ✔ | Gateway | Heartbeat |
-| ✔ | Gateway | Identify |
-| ⬜ | API | READY event |
-| ⬜ | API | Event dispatcher |
-| ⬜ | API | Bot API |
+| Progress | Section | Feature | Current|
+| :---: | --- | --- | --- |
+| ✔ | Base | TLS | |
+| ✔ | Base | WebSocket handshake | |
+| ✔ | Base | WebSocket frames | |
+| ✔ | KSON | ParseNumber | |
+| ✔ | KSON | ParseString | |
+| ✔ | KSON | ParseObject | |
+| ✔ | KSON | ParseNull | |
+| ✔ | KSON | ParseBoolean | |
+| ✔ | KSON | ParseArray | |
+| ✔ | KSON | KSONStringify (QoL) | |
+| ✔ | Gateway | Hello | |
+| ✔ | Gateway | Heartbeat | |
+| ✔ | Gateway | Identify | |
+| ⬜ | API | READY event | <--- We are here ---<|
+| ⬜ | API | Event dispatcher | |
+| ⬜ | API | Bot API | |
 
-**v--- We are here ---v** (API section, top of the table)
+
 
 ## What's KSON?
 
