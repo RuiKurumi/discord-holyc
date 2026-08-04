@@ -41,7 +41,7 @@ This is an AI-assisted implementation of a Discord gateway client built on the H
 
 ## Why Does This Exist
 
-Because "can HolyC talk to Discord's Gateway" was a question that needed answering, and nobody was going to stop me from finding out the hard way — hand-rolled TLS, WebSocket framing, and a JSON parser included.
+My dumbass thought "can HolyC talk to Discord's Gateway?" and it becamse a question that I needed answers to. Nobody was going to stop me from finding out the hard way — hand-rolled TLS, WebSocket framing, and a JSON parser included. I cried multiple times making this. Prayers to the 5 rivers I evaporated.
 
 ## Roadmap
 
