@@ -62,8 +62,8 @@ I cried multiple times making this. Prayers to the 5 rivers I evaporated.
 | ✔ | Gateway | Hello | |
 | ✔ | Gateway | Heartbeat | |
 | ✔ | Gateway | Identify | |
-| ⬜ | API | READY event | <--- We are here ---<|
-| ⬜ | API | Event dispatcher | |
+| ✔ | API | READY event |Finished |
+| ⬜ | API | Event dispatcher |<--- We are here --- |
 | ⬜ | API | Bot API | |
 
 
