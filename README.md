@@ -75,7 +75,7 @@ Because "can HolyC talk to Discord's Gateway" was a question that needed answeri
 
 <img width="480" height="480" alt="KSON meme" src="https://github.com/user-attachments/assets/89ab8259-bed3-4493-afc9-ff28edc6378a" />
 
-KSON (KSON Script Object Notation) is a JSON processor and parser inspired by a mistake of mine, built with HolyC specifically for this repository.
+## KSON (KSON Script Object Notation) is a JSON processor and parser inspired by a mistake of mine, built with HolyC specifically for this repository.
 
 <img width="861" height="439" alt="image" src="https://github.com/user-attachments/assets/30b4b4ea-53e2-4cef-82ce-b4c07ff8f073"/><br>
 - The aforementioned mistake
